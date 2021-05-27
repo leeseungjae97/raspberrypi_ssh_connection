@@ -1,0 +1,76 @@
+{
+    "logs": [
+        {
+            "outputFile": "E:\\androidWiFiP2P\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v23\\values-v23.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\jmnu1\\.gradle\\caches\\transforms-2\\files-2.1\\a8a4fd2b2c3909bfe71257b0d5515dad\\material-1.3.0\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "-1,-1",
+                        "startColumns": "-1,-1",
+                        "startOffsets": "-1,-1"
+                    },
+                    "to": {
+                        "startLines": "61,65",
+                        "startColumns": "4,4",
+                        "startOffsets": "3800,4065",
+                        "endLines": "64,68",
+                        "endColumns": "10,10",
+                        "endOffsets": "4060,4333"
+                    }
+                },
+                {
+                    "source": "E:\\androidWiFiP2P\\app\\src\\main\\res\\values-v23\\themes.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "102",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "524"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "468"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\jmnu1\\.gradle\\caches\\transforms-2\\files-2.1\\f11ee83e971e66be37e41eb39e31dc5a\\appcompat-1.3.0\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startColumns": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startOffsets": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                    },
+                    "to": {
+                        "startLines": "10,11,12,13,14,28,42,43,44,47,51,52,53,54",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "473,608,743,818,905,1643,2393,2512,2639,2861,3085,3200,3307,3420",
+                        "endLines": "10,11,12,13,27,41,42,43,46,50,51,52,53,57",
+                        "endColumns": "134,134,74,86,12,12,118,126,12,12,114,106,112,12",
+                        "endOffsets": "603,738,813,900,1638,2388,2507,2634,2856,3080,3195,3302,3415,3645"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\jmnu1\\.gradle\\caches\\transforms-2\\files-2.1\\f52122426ed85128097908a2e58f6328\\cardview-1.0.0\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "-1",
+                        "startColumns": "-1",
+                        "startOffsets": "-1"
+                    },
+                    "to": {
+                        "startLines": "58",
+                        "startColumns": "4",
+                        "startOffsets": "3650",
+                        "endLines": "60",
+                        "endColumns": "12",
+                        "endOffsets": "3795"
+                    }
+                }
+            ]
+        }
+    ]
+}
