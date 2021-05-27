@@ -1,4 +1,4 @@
-package com.example.AndroidSSHWithRaspberryPi.PiString;
+package com.example.AndroidSSHWithRaspberryPi.PiSettings;
 
 public class PythonScript {
     public static final String SERVO_MOTOR_PY = "python Desktop/servo_motor.py";

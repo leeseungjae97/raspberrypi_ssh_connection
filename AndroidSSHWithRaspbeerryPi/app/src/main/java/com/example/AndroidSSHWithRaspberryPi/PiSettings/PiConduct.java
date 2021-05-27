@@ -1,4 +1,4 @@
-package com.example.AndroidSSHWithRaspberryPi.PiString;
+package com.example.AndroidSSHWithRaspberryPi.PiSettings;
 
 public class PiConduct {
     public static boolean BLIND_UP = false;

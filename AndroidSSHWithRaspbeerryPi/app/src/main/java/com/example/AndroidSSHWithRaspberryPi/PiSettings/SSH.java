@@ -1,7 +1,9 @@
-package com.example.AndroidSSHWithRaspberryPi.PiString;
+package com.example.AndroidSSHWithRaspberryPi.PiSettings;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.Session;
+
+import java.io.Serializable;
 
 public class SSH {
     public Channel channel;

@@ -1,14 +1,14 @@
 package com.example.AndroidSSHWithRaspberryPi;
 
-import com.example.AndroidSSHWithRaspberryPi.PiString.PythonScript;
-import com.example.AndroidSSHWithRaspberryPi.PiString.SSH;
+import com.example.AndroidSSHWithRaspberryPi.PiSettings.PythonScript;
+import com.example.AndroidSSHWithRaspberryPi.PiSettings.SSH;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_DOWN;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_STOP;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_UP;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.REFRESH;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_DOWN;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_STOP;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_UP;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.REFRESH;
 
 public class BlindController {
     private SSH ssh;

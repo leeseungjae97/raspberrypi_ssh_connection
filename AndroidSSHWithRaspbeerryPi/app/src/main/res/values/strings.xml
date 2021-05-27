@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">androidWiFiP2P</string>
+    <string name="description">연결전에 안드로이드 모바일이\n 라즈베리파이와 같은 WiFi를\n 사용하고있는지 확인해주세요</string>
+    <string name="phone_current_wifi">현재 사용중인 WiFi :</string>
+    <string name="connect_complete">라즈베리파이와 연결되었습니다.</string>
+    <string name="confirm">확인</string>
+    <string name="connect">연결하기</string>
+    <string name="password">password</string>
+    <string name="password_label">비밀번호 :</string>
+    <string name="id">id</string>
+    <string name="id_label">아이디 :</string>
+    <string name="server_ip_address">server ip address</string>
+    <string name="server_ip_address_label">서버주소 :</string>
+    <string name="blind_down">커튼 내리기</string>
+    <string name="stop">멈추기</string>
+    <string name="blind_up">커튼 올리기</string>
+    <string name="refresh">새로고침</string>
+    <string name="text_size">15sp</string>
+    <string name="activated">작동중입니다</string>
+    <string name="stop_activated">작동을 중지했습니다</string>
 </resources>

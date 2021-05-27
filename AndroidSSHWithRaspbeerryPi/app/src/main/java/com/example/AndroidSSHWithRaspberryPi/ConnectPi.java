@@ -1,33 +1,37 @@
 package com.example.AndroidSSHWithRaspberryPi;
 
 import android.util.Log;
+import android.view.View;
 
-import com.example.AndroidSSHWithRaspberryPi.PiString.Properties;
-import com.example.AndroidSSHWithRaspberryPi.PiString.SSH;
+import com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties;
+import com.example.AndroidSSHWithRaspberryPi.PiSettings.SSH;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.CHANNEL_TYPE;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.ID;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.SERVER;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.PORT;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.CONFIG_HOST_KEY_CHECKING;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.Properties.NO;
+import java.io.Serializable;
 
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_DOWN;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_STOP;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.BLIND_UP;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.REFRESH;
-import static com.example.AndroidSSHWithRaspberryPi.PiString.PiConduct.CONNECTING;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_DOWN;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_STOP;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.BLIND_UP;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.CONNECTING;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.PiConduct.REFRESH;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties.CHANNEL_TYPE;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties.CONFIG_HOST_KEY_CHECKING;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties.NO;
+import static com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties.PORT;
 
 public class ConnectPi {
     private SSH ssh;
     private JSch jSch;
+
     private int WAIT_CONNECTION_THREAD = 0;
+    private Properties PI_PROPERTIES;
+
     private BlindController blindController;
 
-    public ConnectPi() {
+    public ConnectPi(Properties properties) {
+        PI_PROPERTIES        = properties;
         this.ssh = new SSH();
         this.jSch = new JSch();
 
@@ -41,27 +45,35 @@ public class ConnectPi {
 
     public void connectPi() {
         try {
-            ssh.setSession(jSch.getSession(ID, SERVER, PORT));
+            if(!PI_PROPERTIES.getID().equals("NO_VALUE")
+                    || !PI_PROPERTIES.getSERVER().equals("NO_VALUE")
+                    || !PI_PROPERTIES.getPW().equals("NO_VALUE")) {
 
-            ssh.session.setPassword(Properties.PASSWORD);
-            java.util.Properties config = new java.util.Properties();
-            config.put(CONFIG_HOST_KEY_CHECKING, NO);
-            ssh.session.setConfig(config);
-            ssh.session.connect();
+                String id       = PI_PROPERTIES.getID();
+                String pw       = PI_PROPERTIES.getPW();
+                String server   = PI_PROPERTIES.getSERVER();
 
-            Log.e("session_host", ssh.session.getHost());
-            Log.e("session_user_name", ssh.session.getUserName());
+                ssh.setSession(jSch.getSession(id, server, PORT));
+                ssh.session.setPassword(pw);
 
-            ssh.setChannel(ssh.session.openChannel(CHANNEL_TYPE));
+                java.util.Properties config = new java.util.Properties();
+                config.put(CONFIG_HOST_KEY_CHECKING, NO);
+                ssh.session.setConfig(config);
+                ssh.session.connect();
 
-            ChannelExec channelExec = (ChannelExec) ssh.channel;
-            channelExec.setPty(true);
+                Log.e("session_host", ssh.session.getHost());
+                Log.e("session_user_name", ssh.session.getUserName());
 
-            blindController = new BlindController(ssh, ConnectPi.this);
+                ssh.setChannel(ssh.session.openChannel(CHANNEL_TYPE));
 
-            CONNECTING = false;
-            ifReconnectPi();
+                ChannelExec channelExec = (ChannelExec) ssh.channel;
+                channelExec.setPty(true);
 
+                blindController = new BlindController(ssh, ConnectPi.this);
+
+                CONNECTING = false;
+                ifReconnectPi();
+            }
         } catch (JSchException e) {
             e.printStackTrace();
         }
@@ -76,17 +88,15 @@ public class ConnectPi {
         if(BLIND_STOP || REFRESH) {
             BLIND_DOWN = false;
             BLIND_UP = false;
+            REFRESH = false;
+            BLIND_STOP = false;
         }
         if(BLIND_DOWN) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (ssh.session.getHost().equals("")) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        waitSec();
                     }
                     BLIND_UP = false;
                     blindController.blindDown(ssh);
@@ -98,11 +108,7 @@ public class ConnectPi {
                 @Override
                 public void run() {
                     while (ssh.session.getHost().equals("")) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        waitSec();
                     }
                     BLIND_DOWN = false;
                     blindController.blindUp(ssh);
@@ -110,20 +116,27 @@ public class ConnectPi {
             }).start();
         }
     }
+    public void waitSec() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     public SSH getSsh() {
+        waitSec();
         return ssh;
     }
+    public void setSsh(SSH ssh) {
+        this.ssh = ssh;
+    }
     public BlindController getBlindController() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
+        waitSec();
         return blindController;
     }
     public void closeConnection(SSH ssh) {
@@ -133,7 +146,9 @@ public class ConnectPi {
             @Override
             public void run() {
                 while(CONNECTING) {
-                    try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+
+                    waitSec();
+
                     WAIT_CONNECTION_THREAD++;
                     if(WAIT_CONNECTION_THREAD > 10) {
                         Log.e("close fail timeout", "check connection");
@@ -162,7 +177,8 @@ public class ConnectPi {
                 while(CONNECTING) {
                     Log.e("CLOSE_THREAD", WAIT_CONNECTION_THREAD +"");
 
-                    try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+                    waitSec();
+
                     WAIT_CONNECTION_THREAD++;
                     if(WAIT_CONNECTION_THREAD > 10) {
                         Log.e("close fail timeout", "check connection");
