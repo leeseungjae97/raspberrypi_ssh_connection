@@ -16,8 +16,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusBarColor();
-
         pi = new ConnectPi();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         blindController = pi.getBlindController();
     }
 
