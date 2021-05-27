@@ -9,32 +9,36 @@ import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-    private ConnectPi connectPi;
+    private ConnectPi pi;
+    private BlindController blindController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusBarColor();
-        connectPi = new ConnectPi();
+
+        pi = new ConnectPi();
+        blindController = pi.getBlindController();
     }
+
     @SuppressLint("ResourceType")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void setStatusBarColor() {
         this.getWindow().setStatusBarColor(this.getResources().getColor(R.color.white));
     }
     public void blindDown(View view) {
-        connectPi.blindDown(connectPi.getChannel(), connectPi.getSession());
+        blindController.blindDown(pi.getSsh());
     }
 
     public void blindStop(View view) {
-        connectPi.blindStop(connectPi.getChannel(), connectPi.getSession());
+        blindController.blindStop(pi.getSsh());
     }
 
     public void refresh(View view) {
-        connectPi.refresh(connectPi.getChannel(), connectPi.getSession());
+        blindController.refresh(pi.getSsh());
     }
 
     public void blindUp(View view) {
-        connectPi.blindUp(connectPi.getChannel(), connectPi.getSession());
+        blindController.blindUp(pi.getSsh());
     }
 }
