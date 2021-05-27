@@ -1,4 +1,4 @@
-package com.example.androidwifip2p;
+package com.example.AndroidSSHWithRaspberryPi;
 
 import android.content.Context;
 

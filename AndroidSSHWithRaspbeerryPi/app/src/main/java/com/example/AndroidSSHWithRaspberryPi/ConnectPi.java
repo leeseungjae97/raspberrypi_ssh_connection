@@ -1,10 +1,6 @@
-package com.example.androidwifip2p;
+package com.example.AndroidSSHWithRaspberryPi;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -13,7 +9,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 public class ConnectPi {
-    private Context context;
     private Channel channel;
     private Session session;
     private int CLOSE_THREAD = 0;
@@ -24,8 +19,7 @@ public class ConnectPi {
     private static boolean BLIND_STOP = false;
     private static boolean REFRESH = false;
 
-    public ConnectPi(@NonNull Context context) {
-        this.context = context;
+    public ConnectPi() {
         new Thread(new Runnable() {
             @Override
             public void run() {
