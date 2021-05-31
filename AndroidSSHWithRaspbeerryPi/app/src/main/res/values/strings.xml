@@ -18,4 +18,5 @@
     <string name="text_size">15sp</string>
     <string name="activated">작동중입니다</string>
     <string name="stop_activated">작동을 중지했습니다</string>
+    <string name="connection_dialog_okay_message">해당 정보의 라즈베리파이가 존재하지 않습니다.</string>
 </resources>

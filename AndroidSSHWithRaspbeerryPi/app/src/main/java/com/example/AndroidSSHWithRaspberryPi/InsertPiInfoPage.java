@@ -1,22 +1,19 @@
 package com.example.AndroidSSHWithRaspberryPi;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.example.AndroidSSHWithRaspberryPi.Dialog.ConnectionDialog;
 import com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties;
@@ -24,8 +21,6 @@ import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
 import java.util.Objects;
-
-import static com.example.AndroidSSHWithRaspberryPi.PiSettings.Properties.PI_INTENT;
 
 public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissionsListener, ConnectionDialog.ClickConfirm, IoTMainPage.GetPi {
     private EditText server;
@@ -42,20 +37,6 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
 
     private ConnectPi pi;
 
-    private static final String[] permissions = {
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.CALL_PHONE
-    };
-    public boolean checkPermissions(Activity activity) {
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(activity, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -98,6 +79,7 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
         }
     }
 
+    @SuppressWarnings("InstantiationOfUtilityClass")
     public void connect(View view) {
         SERVER      = Objects.requireNonNull(server.getText()).toString();
         ID          = Objects.requireNonNull(id.getText()).toString();
@@ -107,8 +89,13 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
 
         pi          = new ConnectPi(PI_PROPERTIES);
 
-        if(pi.getSsh() != null) {
-            new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this);
+        if(pi.getSsh().getChannel() != null
+                && pi.getSsh().getSession() != null) {
+            new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.CONFIRM);
+        }
+        else {
+            Log.e("okay", "okay");
+            new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.OKAY);
         }
     }
 
@@ -126,6 +113,11 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
     public void clickConfirm() {
         IoTMainPage.getPi = InsertPiInfoPage.this;
         startActivity(new Intent(InsertPiInfoPage.this, IoTMainPage.class));
+    }
+
+    @Override
+    public void clickOkay() {
+
     }
 
     @Override
