@@ -11,10 +11,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-public class IoTMainPage extends AppCompatActivity {
+import com.example.AndroidSSHWithRaspberryPi.Dialog.ConnectionDialog;
+
+import maes.tech.intentanim.CustomIntent;
+
+public class IoTMainPage extends AppCompatActivity implements ConnectionDialog.ClickConfirm {
     public interface GetPi {
         ConnectPi getPi();
     }
+
     private ProgressBar initLoading;
     public static GetPi getPi;
     private BlindController blindController;
@@ -30,19 +35,21 @@ public class IoTMainPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iot_main_page);
 
-        initLoading     = findViewById(R.id.init_loading);
-        loading         = findViewById(R.id.loading_layout);
-        content         = findViewById(R.id.content);
+        initLoading = findViewById(R.id.init_loading);
+        loading = findViewById(R.id.loading_layout);
+        content = findViewById(R.id.content);
 
-        pi              = getPi.getPi();
+        pi = getPi.getPi();
         blindController = pi.getBlindController();
 
         setStatusBarColor();
     }
+
     public void setStatusBarColor() {
         this.getWindow().setStatusBarColor(this.getResources().getColor(R.color.main));
         initLoading.setVisibility(View.GONE);
     }
+
     public void progressText(String message) {
         loading.setVisibility(View.VISIBLE);
         content.setText(message);
@@ -51,8 +58,8 @@ public class IoTMainPage extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    while(PROGRESSING) {
-                        if(progressDot == 3) {
+                    while (PROGRESSING) {
+                        if (progressDot == 3) {
                             progressDot = 0;
                             contentBuilder.replace(contentBuilder.indexOf("."), contentBuilder.toString().length(), "");
                         }
@@ -72,6 +79,7 @@ public class IoTMainPage extends AppCompatActivity {
             }
         }).start();
     }
+
     public void blindDown(View view) {
         PROGRESSING = true;
         progressText("작동중입니다.");
@@ -84,15 +92,28 @@ public class IoTMainPage extends AppCompatActivity {
         blindController.blindStop(pi.getSsh());
     }
 
-    public void refresh(View view) {
-        PROGRESSING = false;
-        loading.setVisibility(View.GONE);
-        blindController.refresh(pi.getSsh());
-    }
+//    public void refresh(View view) {
+//        PROGRESSING = false;
+//        loading.setVisibility(View.GONE);
+//        blindController.refresh(pi.getSsh());
+//    }
 
     public void blindUp(View view) {
         PROGRESSING = true;
         progressText("작동중입니다.");
         blindController.blindUp(pi.getSsh());
+    }
+
+    public void backPressed(View view) {
+        new ConnectionDialog(IoTMainPage.this, IoTMainPage.this, ConnectionDialog.CLOSE);
+    }
+
+    @Override
+    public void clickClose() {
+        super.onBackPressed();
+        PROGRESSING = false;
+        pi.closeConnection(pi.getSsh());
+        CustomIntent.customType(this,"right-to-left");
+        finish();
     }
 }

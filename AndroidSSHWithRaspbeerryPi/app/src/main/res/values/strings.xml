@@ -19,4 +19,6 @@
     <string name="activated">작동중입니다</string>
     <string name="stop_activated">작동을 중지했습니다</string>
     <string name="connection_dialog_okay_message">해당 정보의 라즈베리파이가 존재하지 않습니다.</string>
+    <string name="connection_dialog_close_message">연결을 종료하시겠습니까?</string>
+    <string name="save_insert_info">입력정보 저장하기</string>
 </resources>

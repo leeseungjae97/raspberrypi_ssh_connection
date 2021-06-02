@@ -1,6 +1,5 @@
 package com.example.AndroidSSHWithRaspberryPi.Dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -15,9 +14,11 @@ import com.example.AndroidSSHWithRaspberryPi.R;
 public class ConnectionDialog {
     public static final int CONFIRM = 0;
     public static final int OKAY = 1;
+    public static final int CLOSE = 2;
     public interface ClickConfirm {
-        void clickConfirm();
-        void clickOkay();
+        default void clickConfirm() {}
+        default void clickOkay() {}
+        default void clickClose() {}
     }
     public ConnectionDialog(Context context, ClickConfirm clickConfirm, int branch) {
         final Dialog dlg = new Dialog(context);
@@ -31,9 +32,15 @@ public class ConnectionDialog {
 
         final TextView content = dlg.findViewById(R.id.check_connection);
 
-        if(branch == OKAY) {
-            content.setText(R.string.connection_dialog_okay_message);
-        }
+
+      switch (branch) {
+          case OKAY:
+              content.setText(R.string.connection_dialog_okay_message);
+              break;
+          case CLOSE:
+              content.setText(R.string.connection_dialog_close_message);
+              break;
+      }
 
         final Button confirm = dlg.findViewById(R.id.confirm_button);
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +52,8 @@ public class ConnectionDialog {
                         clickConfirm.clickConfirm();
                     case OKAY:
                         clickConfirm.clickOkay();
+                    case CLOSE:
+                        clickConfirm.clickClose();
                 }
             }
         });

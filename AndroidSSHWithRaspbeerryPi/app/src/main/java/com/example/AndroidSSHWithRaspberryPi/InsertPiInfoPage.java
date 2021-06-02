@@ -8,12 +8,13 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +37,15 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
 
     private TextView WiFiName;
     private ImageView refresh;
+    private ProgressBar connectLoading;
+    private CheckBox infoSaveCheckBox;
 
     private Properties PI_PROPERTIES;
 
     private String SERVER;
     private String ID;
     private String PASSWORD;
+    private boolean isConnect = false;
 
     private ConnectPi pi;
 
@@ -58,19 +62,22 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
         AutoPermissions.Companion.loadAllPermissions(InsertPiInfoPage.this, 101);
         PI_PROPERTIES       = new Properties(InsertPiInfoPage.this);
 
-        server      = findViewById(R.id.pi_server);
-        id          = findViewById(R.id.pi_id);
-        pw          = findViewById(R.id.pi_pw);
-        WiFiName    = findViewById(R.id.wifi_name);
-        refresh     = findViewById(R.id.refresh_page);
+        server          = findViewById(R.id.pi_server);
+        id              = findViewById(R.id.pi_id);
+        pw              = findViewById(R.id.pi_pw);
+        WiFiName        = findViewById(R.id.wifi_name);
+        refresh         = findViewById(R.id.refresh_page);
+        connectLoading  = findViewById(R.id.loading_connect);
+        infoSaveCheckBox = findViewById(R.id.save_insert_info);
 
-        if(!PI_PROPERTIES.getID().equals("NO_VALUE")
-            && !PI_PROPERTIES.getPW().equals("NO_VALUE")
-            && !PI_PROPERTIES.getSERVER().equals("NO_VALUE")) {
-
-            id.setText(PI_PROPERTIES.getID());
-            pw.setText(PI_PROPERTIES.getPW());
-            server.setText(PI_PROPERTIES.getSERVER());
+        if(PI_PROPERTIES.getCHECK()
+                && !PI_PROPERTIES.getSAVE_ID().equals("NO_VALUE")
+                && !PI_PROPERTIES.getSAVE_PASSWORD().equals("NO_VALUE")
+                && !PI_PROPERTIES.getSAVE_SERVER().equals("NO_VALUE")) {
+            infoSaveCheckBox.setChecked(true);
+            server.setText(PI_PROPERTIES.getSAVE_SERVER());
+            id.setText(PI_PROPERTIES.getSAVE_ID());
+            pw.setText(PI_PROPERTIES.getSAVE_PASSWORD());
         }
     }
 
@@ -78,6 +85,7 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
     @Override
     protected void onResume() {
         super.onResume();
+
         WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo;
 
@@ -90,22 +98,51 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
 
     @SuppressWarnings("InstantiationOfUtilityClass")
     public void connect(View view) {
-        SERVER      = Objects.requireNonNull(server.getText()).toString();
-        ID          = Objects.requireNonNull(id.getText()).toString();
-        PASSWORD    = Objects.requireNonNull(pw.getText()).toString();
+        final String SERVER = server.getText().toString();
+        final String ID = id.getText().toString();
+        final String PW = pw.getText().toString();
 
-        PI_PROPERTIES.saveProperties(SERVER, ID, PASSWORD);
-
-        pi          = new ConnectPi(PI_PROPERTIES);
-
-        if(pi.getSsh().getChannel() != null
-                && pi.getSsh().getSession() != null) {
-            new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.CONFIRM);
-        }
-        else {
-            Log.e("okay", "okay");
-            new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.OKAY);
-        }
+        connectLoading.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int threadRun = 0;
+                while(!isConnect) {
+                    pi = new ConnectPi(SERVER, ID, PW);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    threadRun++;
+                    if(pi.getSsh().channel != null && pi.getSsh().getSession() != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                connectLoading.setVisibility(View.GONE);
+                                new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.CONFIRM);
+                                if(!PI_PROPERTIES.getCHECK()) {
+                                    server.setText("");
+                                    id.setText("");
+                                    pw.setText("");
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    if(threadRun > 10) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                connectLoading.setVisibility(View.GONE);
+                                new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.OKAY);
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+        }).start();
     }
     public void refreshPage(View view) {
         final Animation rotate = AnimationUtils.loadAnimation(InsertPiInfoPage.this, R.anim.rotate_360);
@@ -119,6 +156,17 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
         CustomIntent.customType(this,"fadein-to-fadeout");
         Toast.makeText(InsertPiInfoPage.this, "새로고침 하였습니다.", Toast.LENGTH_SHORT).show();
         finish();
+    }
+    public void checkSave(View view) {
+        if(((CheckBox)view).isChecked()) {
+            SERVER      = Objects.requireNonNull(server.getText()).toString();
+            ID          = Objects.requireNonNull(id.getText()).toString();
+            PASSWORD    = Objects.requireNonNull(pw.getText()).toString();
+
+            PI_PROPERTIES.saveInfo(SERVER, ID, PASSWORD, true);
+        }else {
+            PI_PROPERTIES.deleteSaveInfo();
+        }
     }
 
     @Override
@@ -135,11 +183,7 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
     public void clickConfirm() {
         IoTMainPage.getPi = InsertPiInfoPage.this;
         startActivity(new Intent(InsertPiInfoPage.this, IoTMainPage.class));
-    }
-
-    @Override
-    public void clickOkay() {
-
+        CustomIntent.customType(this,"left-to-right");
     }
 
     @Override

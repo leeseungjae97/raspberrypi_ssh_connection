@@ -25,7 +25,7 @@ public class BlindController {
         if(pi != null) {
             if(BLIND_UP) {
                 BLIND_UP = false;
-                pi.closeConnection(ssh, true);
+                pi.reConnection(ssh, true);
             }else {
                 new Thread(new Runnable() {
                     @Override
@@ -50,7 +50,7 @@ public class BlindController {
         if(pi != null) {
             if(BLIND_DOWN) {
                 BLIND_DOWN = false;
-                pi.closeConnection(ssh, true);
+                pi.reConnection(ssh, true);
             }else {
                 new Thread(new Runnable() {
                     @Override
@@ -73,14 +73,13 @@ public class BlindController {
     public void blindStop(SSH ssh){
         BLIND_STOP = true;
         if(pi != null) {
-            pi.closeConnection(ssh, true);
+            pi.reConnection(ssh, true);
         }
-
     }
     public void refresh(SSH ssh) {
         REFRESH = true;
         if(pi != null) {
-            pi.closeConnection(ssh, true);
+            pi.reConnection(ssh, true);
         }
     }
 }
