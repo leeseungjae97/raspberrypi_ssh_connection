@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,8 @@ import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
 import java.util.Objects;
+
+import maes.tech.intentanim.CustomIntent;
 
 public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissionsListener, ConnectionDialog.ClickConfirm, IoTMainPage.GetPi {
     private EditText server;
@@ -112,6 +115,10 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
             public void run() {
             }
         }, 1000);
+        startActivity(new Intent(InsertPiInfoPage.this, InsertPiInfoPage.class));
+        CustomIntent.customType(this,"fadein-to-fadeout");
+        Toast.makeText(InsertPiInfoPage.this, "새로고침 하였습니다.", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @Override
