@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".InsertPiInfoPage">
 
+    <ImageView
+        android:id="@+id/refresh_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="20dp"
+        android:src="@drawable/refresh_icon"
+        android:tintMode="multiply"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:onClick="refreshPage"
+        app:tint="@color/main" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/description"
         android:layout_width="0dp"

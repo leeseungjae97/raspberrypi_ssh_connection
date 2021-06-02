@@ -7,9 +7,13 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +32,7 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
     private EditText pw;
 
     private TextView WiFiName;
+    private ImageView refresh;
 
     private Properties PI_PROPERTIES;
 
@@ -54,6 +59,7 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
         id          = findViewById(R.id.pi_id);
         pw          = findViewById(R.id.pi_pw);
         WiFiName    = findViewById(R.id.wifi_name);
+        refresh     = findViewById(R.id.refresh_page);
 
         if(!PI_PROPERTIES.getID().equals("NO_VALUE")
             && !PI_PROPERTIES.getPW().equals("NO_VALUE")
@@ -97,6 +103,15 @@ public class InsertPiInfoPage extends AppCompatActivity implements AutoPermissio
             Log.e("okay", "okay");
             new ConnectionDialog(InsertPiInfoPage.this, InsertPiInfoPage.this, ConnectionDialog.OKAY);
         }
+    }
+    public void refreshPage(View view) {
+        final Animation rotate = AnimationUtils.loadAnimation(InsertPiInfoPage.this, R.anim.rotate_360);
+        refresh.startAnimation(rotate);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+            }
+        }, 1000);
     }
 
     @Override
